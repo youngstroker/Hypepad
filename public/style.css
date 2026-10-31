@@ -571,3 +571,7 @@ button.coin-card:hover .coin-img { transform: scale(1.06); }
 }
 .reduce-motion .aurora span, .reduce-motion .shine::after, .reduce-motion .progress > span::after, .reduce-motion .flow-line i { animation: none; }
 .wallet-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--up); box-shadow: 0 0 8px var(--up); }
+@media (max-width: 400px) {
+    .nav .logo [data-site-name] { display: none; }
+    .nav { gap: 8px; }
+}
