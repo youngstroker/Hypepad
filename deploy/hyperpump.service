@@ -1,0 +1,24 @@
+# Alternative to Docker: run under systemd behind your own HTTPS proxy.
+# Copy to /etc/systemd/system/, adjust paths, then:
+#   systemctl daemon-reload && systemctl enable --now hyperpump
+[Unit]
+Description=HyperPump launchpad
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=hyperpump
+WorkingDirectory=/opt/hyperpump
+ExecStart=/usr/bin/node server/index.js
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+KillSignal=SIGTERM
+Environment=NODE_ENV=production
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/hyperpump/data
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

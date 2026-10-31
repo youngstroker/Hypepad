@@ -1,0 +1,12 @@
+node_modules/
+.env
+data/
+contracts/node_modules/
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/.env
+contracts/deployments/localhost.json
+.claude/
+.DS_Store
+.vercel/

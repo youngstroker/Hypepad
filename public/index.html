@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <!--SEO: the server fills in title, description, canonical and social tags-->
+    <meta name="theme-color" content="#09090b">
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/js/boot.js"></script>
+    <script type="module" src="/js/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#launch">Skip to launch form</a>
+
+<div class="nav-wrap">
+    <header class="nav">
+        <a class="logo" href="/" aria-label="HyperPump home">
+            <span class="logo-tile"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22 L13 9 L19 18 L23 12 L27 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+            <span data-site-name>HyperPump</span>
+        </a>
+        <nav class="nav-links" aria-label="Sections">
+            <a href="#launch">Launch</a>
+            <a href="#coins">Coins</a>
+            <a href="#how">How it works</a>
+        </nav>
+        <div class="nav-actions">
+            <span class="net-pill" id="netPill" title="Networks this site is connected to">—</span>
+            <button type="button" class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">
+                <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path fill="none" stroke="currentColor" stroke-width="1.8" d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="solWalletBtn">Connect wallet</button>
+        </div>
+    </header>
+</div>
+
+<div class="banner" id="banner" hidden role="status"></div>
+
+<main>
+    <section class="hero">
+        <div class="hero-bg" aria-hidden="true">
+            <div class="aurora"><span></span><span></span><span></span></div>
+            <div class="dots"></div>
+            <div class="horizon"></div>
+        </div>
+        <a class="announce" href="#launch" data-reveal>
+            <span class="announce-tag">Live</span>
+            <span>SOL in, memecoin out on HyperEVM</span>
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <h1 data-reveal>Launch on Hyperliquid.<br><span class="grad">Pay in SOL.</span></h1>
+        <p class="lede" data-reveal>Create a memecoin on HyperEVM in one step, straight from your Solana wallet. Fair-launch bonding curve, no presale, liquidity locked when it graduates.</p>
+        <div class="hero-ctas" data-reveal>
+            <a class="btn btn-primary btn-lg shine" href="#launch">Launch a coin <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn-ghost btn-lg" href="#coins">Browse coins</a>
+        </div>
+        <dl class="stats" id="stats" data-reveal>
+            <div class="stat spot"><dt>Coins launched</dt><dd data-stat="tokens">—</dd></div>
+            <div class="stat spot"><dt>24h volume</dt><dd data-stat="volume24h">—</dd></div>
+            <div class="stat spot"><dt>Graduated</dt><dd data-stat="graduated">—</dd></div>
+            <div class="stat spot"><dt><span class="live-dot" aria-hidden="true"></span>1 SOL</dt><dd data-stat="rate">—</dd></div>
+        </dl>
+    </section>
+
+    <div class="ticker" aria-label="Recent trades">
+        <div class="ticker-track" id="ticker"></div>
+    </div>
+
+    <section class="launch" id="launch" aria-labelledby="launchTitle">
+        <div class="section-head center" data-reveal>
+            <span class="pill-label">Create</span>
+            <h2 id="launchTitle">Launch your coin</h2>
+            <p class="sub">One SOL transfer. Your coin is live on HyperEVM about 20 seconds later.</p>
+        </div>
+
+        <div class="launch-grid">
+            <form class="panel form" id="launchForm" novalidate>
+                <div class="form-top">
+                    <div class="field upload-field">
+                        <span class="label">Image</span>
+                        <label class="upload" id="uploadBox">
+                            <input type="file" id="imageInput" accept="image/png,image/jpeg,image/gif,image/webp" class="sr-only">
+                            <img id="uploadPreview" alt="" hidden>
+                            <span class="upload-empty" id="uploadEmpty">
+                                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0-4 4m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                                <span><u>Upload</u> or drop</span>
+                                <small>PNG, JPG, GIF, WEBP · 2 MB</small>
+                            </span>
+                            <span class="upload-state" id="uploadState" hidden></span>
+                        </label>
+                    </div>
+                    <div class="form-top-fields">
+                        <div class="field">
+                            <label for="name">Name</label>
+                            <input id="name" name="name" maxlength="32" autocomplete="off" placeholder="Purple Frog" required>
+                        </div>
+                        <div class="field">
+                            <label for="symbol">Ticker</label>
+                            <div class="input-affix"><span>$</span><input id="symbol" name="symbol" maxlength="10" autocomplete="off" placeholder="PFROG" required></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="description">Description <em>optional</em></label>
+                    <textarea id="description" name="description" rows="3" maxlength="500" placeholder="What is this coin about?"></textarea>
+                    <span class="counter" id="descCount">0 / 500</span>
+                </div>
+
+                <details class="socials">
+                    <summary>Socials <em>optional</em></summary>
+                    <div class="grid-3">
+                        <div class="field"><label for="twitter">X / Twitter</label><input id="twitter" name="twitter" placeholder="@handle" autocomplete="off"></div>
+                        <div class="field"><label for="telegram">Telegram</label><input id="telegram" name="telegram" placeholder="t.me/group" autocomplete="off"></div>
+                        <div class="field"><label for="website">Website</label><input id="website" name="website" placeholder="https://" autocomplete="off" inputmode="url"></div>
+                    </div>
+                </details>
+
+                <div class="field">
+                    <label for="recipient">Your HyperEVM address <em>receives your coins and creator fees</em></label>
+                    <div class="input-row">
+                        <input id="recipient" name="recipient" placeholder="0x…" autocomplete="off" spellcheck="false" class="mono">
+                        <button type="button" class="btn btn-ghost btn-sm" id="useEvmBtn">Use EVM wallet</button>
+                    </div>
+                    <p class="hint">A wallet you control on HyperEVM, like MetaMask or Rabby. Not an exchange deposit address.</p>
+                </div>
+
+                <div class="field">
+                    <label for="initialBuy">Initial buy <em>optional</em></label>
+                    <div class="input-affix right"><input id="initialBuy" name="initialBuy" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"><span>SOL</span></div>
+                    <div class="chips" id="buyChips">
+                        <button type="button" data-v="0">None</button>
+                        <button type="button" data-v="0.1">0.1</button>
+                        <button type="button" data-v="0.5">0.5</button>
+                        <button type="button" data-v="1">1</button>
+                        <button type="button" data-v="2">2</button>
+                    </div>
+                    <p class="hint">Bought for you in the same transaction that creates the coin, so nobody can buy before you.</p>
+                </div>
+
+                <p class="form-error" id="formError" role="alert" hidden></p>
+                <button type="submit" class="btn btn-primary btn-block shine" id="launchBtn">Connect wallet to launch</button>
+                <p class="fine">By launching you agree to the <a href="#" data-open="terms">Terms</a> and confirm you read the <a href="#" data-open="risks">risks</a>.</p>
+            </form>
+
+            <aside class="side">
+                <div class="panel preview-card">
+                    <p class="eyebrow">Live preview</p>
+                    <div class="coin-card static" id="previewCard"></div>
+                </div>
+                <div class="panel">
+                    <p class="eyebrow">You pay</p>
+                    <dl class="kv" id="costList">
+                        <div><dt>Launch fee</dt><dd id="costFee">—</dd></div>
+                        <div><dt>Initial buy</dt><dd id="costBuy">—</dd></div>
+                        <div class="total"><dt>Total</dt><dd id="costTotal">—</dd></div>
+                    </dl>
+                    <dl class="kv muted">
+                        <div><dt>You receive (est.)</dt><dd id="costTokens">—</dd></div>
+                        <div><dt>SOL → HYPE rate</dt><dd id="costRate">—</dd></div>
+                        <div><dt>Network fee</dt><dd>~0.00001 SOL</dd></div>
+                    </dl>
+                </div>
+                <div class="panel facts">
+                    <p class="eyebrow">Every coin</p>
+                    <ul>
+                        <li><b>1,000,000,000</b> fixed supply, no mint, no tax, no owner</li>
+                        <li><b>80%</b> sold on the bonding curve, priced in HYPE</li>
+                        <li><b>20%</b> + raised HYPE seed the DEX pool at graduation, LP burned</li>
+                        <li><b id="factFee">1%</b> trade fee, <span id="factCreator">0.3%</span> of it paid to the creator</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <section class="coins" id="coins" aria-labelledby="coinsTitle">
+        <div class="section-head row" data-reveal>
+            <div>
+                <span class="pill-label">Discover</span>
+                <h2 id="coinsTitle">Launched coins</h2>
+            </div>
+            <div class="coins-tools">
+                <div class="tabs" role="tablist" aria-label="Sort coins" id="sortTabs">
+                    <button role="tab" data-sort="new" aria-selected="true">New</button>
+                    <button role="tab" data-sort="trending" aria-selected="false">Trending</button>
+                    <button role="tab" data-sort="mcap" aria-selected="false">Market cap</button>
+                    <button role="tab" data-sort="graduated" aria-selected="false">Graduated</button>
+                </div>
+                <label class="search">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m21 21-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Z"/></svg>
+                    <input type="search" id="search" placeholder="Search name, ticker, or 0x…" aria-label="Search coins" autocomplete="off">
+                    <kbd>/</kbd>
+                </label>
+            </div>
+        </div>
+        <div class="coin-grid" id="coinGrid" aria-live="polite"></div>
+        <div class="grid-foot">
+            <button type="button" class="btn btn-ghost" id="loadMore" hidden>Load more</button>
+        </div>
+    </section>
+
+    <section class="how" id="how" aria-labelledby="howTitle">
+        <div class="section-head center" data-reveal>
+            <span class="pill-label">How it works</span>
+            <h2 id="howTitle">From SOL to a live market</h2>
+            <p class="sub">Four steps, all on-chain and visible. If anything fails after you pay, your SOL is refunded automatically.</p>
+        </div>
+        <ol class="bento">
+            <li class="bento-card wide spot" data-reveal>
+                <div class="flow" aria-hidden="true">
+                    <span class="flow-node sol">SOL</span>
+                    <span class="flow-line"><i></i></span>
+                    <span class="flow-node relay"><svg class="logo-mark" viewBox="0 0 32 32"><path d="M6 22 L13 9 L19 18 L23 12 L27 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg></span>
+                    <span class="flow-line"><i></i></span>
+                    <span class="flow-node hype">HYPE</span>
+                </div>
+                <span class="step-no">01</span>
+                <h3>Pay in SOL</h3>
+                <p>Fill in your coin and approve one transfer in your Solana wallet. The quote shows every fee before you sign.</p>
+            </li>
+            <li class="bento-card spot" data-reveal>
+                <span class="bento-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/></svg></span>
+                <span class="step-no">02</span>
+                <h3>Deployed on HyperEVM</h3>
+                <p>Once your payment is final on Solana (about 15 seconds), the coin is created with your initial buy in the same transaction.</p>
+            </li>
+            <li class="bento-card spot" data-reveal>
+                <span class="bento-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M14 7h7v7"/></svg></span>
+                <span class="step-no">03</span>
+                <h3>Trade on the curve</h3>
+                <p>Buy with SOL here, or buy and sell with HYPE from any HyperEVM wallet. The price follows a public formula.</p>
+            </li>
+            <li class="bento-card wide spot" data-reveal>
+                <div class="curve-art" aria-hidden="true">
+                    <svg viewBox="0 0 400 120" preserveAspectRatio="none"><defs><linearGradient id="cg" x1="0" x2="1"><stop offset="0" stop-color="#3b6cff"/><stop offset="1" stop-color="#22d3ee"/></linearGradient><linearGradient id="cf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b6cff" stop-opacity=".28"/><stop offset="1" stop-color="#3b6cff" stop-opacity="0"/></linearGradient></defs><path d="M0 115 C 120 112, 220 95, 300 55 S 380 8, 400 4 L400 120 L0 120Z" fill="url(#cf)"/><path d="M0 115 C 120 112, 220 95, 300 55 S 380 8, 400 4" fill="none" stroke="url(#cg)" stroke-width="2.5"/><circle cx="400" cy="4" r="5" fill="#22d3ee"/></svg>
+                    <span class="grad-tag">Graduated · LP burned</span>
+                </div>
+                <span class="step-no">04</span>
+                <h3>Graduate to HyperSwap</h3>
+                <p>When the curve sells out, the raised HYPE and the remaining 20% seed a HyperSwap pool. The LP tokens are burned, so that liquidity stays.</p>
+            </li>
+        </ol>
+    </section>
+
+    <section class="cta-band" data-reveal>
+        <div class="cta-inner">
+            <div class="horizon small" aria-hidden="true"></div>
+            <h2>Ready to launch?</h2>
+            <p class="sub">Name it, upload an image, pay in SOL. That's it.</p>
+            <a class="btn btn-primary btn-lg shine" href="#launch">Launch a coin <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-top">
+        <a class="logo" href="/"><span class="logo-tile"><svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22 L13 9 L19 18 L23 12 L27 22" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/></svg></span><span data-site-name>HyperPump</span></a>
+        <nav class="footer-links" aria-label="Legal">
+            <a href="#" data-open="terms">Terms</a>
+            <a href="#" data-open="risks">Risks</a>
+            <a href="/api/health" target="_blank" rel="noopener">Status</a>
+            <a href="#" id="factoryLink" target="_blank" rel="noopener noreferrer">Contract</a>
+        </nav>
+    </div>
+    <p class="disclaimer">Memecoins are extremely risky and usually lose most of their value. Nothing here is financial advice. Coins are created by users; we do not endorse any of them. Not available where prohibited.</p>
+</footer>
+
+<!-- ============================================================ dialogs -->
+
+<dialog class="modal modal-wide" id="tokenModal" aria-labelledby="tokenTitle">
+    <button type="button" class="modal-close" data-close aria-label="Close">×</button>
+    <div id="tokenBody"></div>
+</dialog>
+
+<dialog class="modal" id="orderModal" aria-labelledby="orderTitle">
+    <button type="button" class="modal-close" data-close aria-label="Close">×</button>
+    <div id="orderBody"></div>
+</dialog>
+
+<dialog class="modal" id="settingsModal" aria-labelledby="settingsTitle">
+    <button type="button" class="modal-close" data-close aria-label="Close">×</button>
+    <h2 id="settingsTitle">Settings</h2>
+    <div class="tabs small" role="tablist" id="settingsTabs">
+        <button role="tab" data-pane="prefs" aria-selected="true">Preferences</button>
+        <button role="tab" data-pane="orders" aria-selected="false">My orders</button>
+        <button role="tab" data-pane="wallets" aria-selected="false">Wallets</button>
+    </div>
+    <form class="pane" data-pane="prefs" id="settingsForm">
+        <fieldset class="field">
+            <legend>Show prices in</legend>
+            <div class="seg" data-setting="currency">
+                <button type="button" data-v="usd">USD</button>
+                <button type="button" data-v="hype">HYPE</button>
+            </div>
+        </fieldset>
+        <fieldset class="field">
+            <legend>Default slippage</legend>
+            <div class="seg" data-setting="slippageBps">
+                <button type="button" data-v="100">1%</button>
+                <button type="button" data-v="300">3%</button>
+                <button type="button" data-v="500">5%</button>
+                <button type="button" data-v="1000">10%</button>
+            </div>
+            <p class="hint">If the price moves more than this before your order fills, the order is refunded instead.</p>
+        </fieldset>
+        <fieldset class="field">
+            <legend>Solana priority fee</legend>
+            <div class="seg" data-setting="priority">
+                <button type="button" data-v="off">Off</button>
+                <button type="button" data-v="normal">Normal</button>
+                <button type="button" data-v="fast">Fast</button>
+                <button type="button" data-v="turbo">Turbo</button>
+            </div>
+            <p class="hint" id="priorityHint"></p>
+        </fieldset>
+        <div class="field">
+            <label for="defaultRecipient">Default HyperEVM address</label>
+            <input id="defaultRecipient" class="mono" placeholder="0x…" autocomplete="off" spellcheck="false">
+        </div>
+        <label class="toggle"><input type="checkbox" id="autoRefresh"><span>Auto-refresh coins and prices</span></label>
+        <label class="toggle"><input type="checkbox" id="reduceMotion"><span>Reduce motion (pause the trade ticker)</span></label>
+        <div class="settings-actions">
+            <button type="button" class="btn btn-ghost btn-sm" id="resetSettings">Reset to defaults</button>
+            <span class="saved" id="savedNote" aria-live="polite"></span>
+        </div>
+    </form>
+    <div class="pane" data-pane="orders" hidden>
+        <p class="hint">Orders placed from this browser. Payment status is always read from the chain.</p>
+        <ul class="order-list" id="orderList"></ul>
+    </div>
+    <div class="pane" data-pane="wallets" hidden>
+        <div class="wallet-row"><div><p class="eyebrow">Solana</p><p class="mono" id="solWalletInfo">Not connected</p></div><button type="button" class="btn btn-ghost btn-sm" id="solWalletToggle">Connect</button></div>
+        <div class="wallet-row"><div><p class="eyebrow">HyperEVM</p><p class="mono" id="evmWalletInfo">Not connected</p></div><button type="button" class="btn btn-ghost btn-sm" id="evmWalletToggle">Connect</button></div>
+    </div>
+</dialog>
+
+<dialog class="modal" id="walletModal" aria-labelledby="walletTitle">
+    <button type="button" class="modal-close" data-close aria-label="Close">×</button>
+    <h2 id="walletTitle">Connect a Solana wallet</h2>
+    <div class="wallet-list" id="walletList"></div>
+</dialog>
+
+<dialog class="modal" id="docModal" aria-labelledby="docTitle">
+    <button type="button" class="modal-close" data-close aria-label="Close">×</button>
+    <div id="docBody" class="doc"></div>
+</dialog>
+
+<template id="doc-terms">
+    <h2 id="docTitle">Terms of use</h2>
+    <ol>
+        <li>The service converts the SOL you send into HYPE at the quoted rate and uses it to create or buy tokens on HyperEVM for the address you provide. Quotes show the full amount, the destination and every fee before you sign.</li>
+        <li>Tokens are created by users. We do not review, endorse or guarantee any token, and we may hide tokens from this site that break the law or these terms. Hiding a token does not affect it on-chain.</li>
+        <li>You are responsible for the HyperEVM address you enter. Tokens sent to an address you do not control cannot be recovered.</li>
+        <li>If an order cannot be filled within your slippage limit, or anything else fails after you paid, the SOL is returned to the paying wallet. Network fees are not refunded.</li>
+        <li>You must not use the service where it is prohibited, if you are subject to sanctions, or to launch tokens that impersonate others, infringe rights or are intended to defraud.</li>
+        <li>The service is provided as is. To the extent the law allows, we are not liable for losses from trading, smart-contract behaviour, network outages, or price movements.</li>
+    </ol>
+</template>
+<template id="doc-risks">
+    <h2 id="docTitle">Risks</h2>
+    <ul>
+        <li><b>Memecoins usually go to zero.</b> Only spend what you can afford to lose entirely.</li>
+        <li><b>Prices move fast.</b> Bonding-curve prices change with every trade; early buyers can sell into later ones.</li>
+        <li><b>Cross-chain conversion.</b> Your SOL is held by the platform treasury and the platform's relayer spends its own HYPE for you. That relayer is a trusted party.</li>
+        <li><b>Smart contracts can have bugs.</b> Read the factory contract and its audit before relying on it.</li>
+        <li><b>Anyone can launch a coin with any name.</b> A coin named after a person or brand is not affiliated with them. Always check the contract address.</li>
+    </ul>
+</template>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+</body>
+</html>

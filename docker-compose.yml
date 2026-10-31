@@ -1,0 +1,36 @@
+# Production: the app plus Caddy, which gets and renews HTTPS certificates
+# for $DOMAIN automatically. Point the domain's A/AAAA records at this server,
+# fill in .env (see .env.example), then: docker compose up -d --build
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      HOST: 0.0.0.0
+      DATA_DIR: /data
+      TRUST_PROXY: "true"
+    volumes:
+      - hyperpump-data:/data
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+  caddy:
+    image: caddy:2.8
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+
+volumes:
+  hyperpump-data:
+  caddy-data:
+  caddy-config:

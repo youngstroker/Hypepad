@@ -1,0 +1,19 @@
+{
+  "name": "hyperpump",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Front-end SPL token launchpad. Solana libraries are bundled locally from pinned versions.",
+  "scripts": {
+    "build": "esbuild src/solana.js --bundle --format=esm --platform=browser --target=es2022 --minify --legal-comments=none --define:global=globalThis --outfile=vendor/solana.js"
+  },
+  "dependencies": {
+    "@solana/spl-token": "0.4.9",
+    "@solana/web3.js": "1.95.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.0"
+  },
+  "overrides": {
+    "@solana/web3.js": "1.95.3"
+  }
+}

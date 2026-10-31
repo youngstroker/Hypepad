@@ -1,0 +1,35 @@
+{
+  "name": "hyperpump",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Launch memecoins on Hyperliquid's HyperEVM and pay with SOL.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build": "esbuild src/client-libs.js --bundle --format=esm --platform=browser --target=es2022 --minify --legal-comments=none --define:global=globalThis --outfile=public/vendor/libs.js",
+    "abi": "node scripts/export-abi.js",
+    "setup:local": "node scripts/setup-local.js",
+    "start": "node server/index.js",
+    "dev": "node --watch-path=server server/index.js",
+    "test": "node --test --test-concurrency=1 server/test/*.test.js",
+    "admin": "node scripts/admin.js",
+    "preflight": "node scripts/preflight.js",
+    "big-blocks": "node scripts/big-blocks.js"
+  },
+  "dependencies": {
+    "@msgpack/msgpack": "2.8.0",
+    "@solana/web3.js": "1.95.3",
+    "bs58": "6.0.0",
+    "dotenv": "16.4.7",
+    "express": "4.21.2",
+    "viem": "2.21.55"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.0"
+  },
+  "overrides": {
+    "@solana/web3.js": "1.95.3"
+  }
+}

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HyperPump - Solana Token Launchpad</title>
+    <meta name="description" content="Create a real SPL token on Solana in one transaction. You control the mint and freeze authorities. No platform fee.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+    <a class="logo" href="#top" aria-label="HyperPump home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        <span>Hyper<b>Pump</b></span>
+    </a>
+    <div class="nav-actions">
+        <div class="seg" role="group" aria-label="Solana network">
+            <button type="button" class="seg-btn" data-network="devnet" aria-pressed="true">Devnet</button>
+            <button type="button" class="seg-btn" data-network="mainnet-beta" aria-pressed="false">Mainnet</button>
+        </div>
+        <button type="button" class="btn-wallet" id="walletBtn">Connect</button>
+    </div>
+</header>
+
+<div class="banner" id="networkBanner" role="status"></div>
+
+<section class="hero" id="top">
+    <h1>Launch a Solana token<br><span>in one transaction</span></h1>
+    <p>Create a real SPL token, mint the supply to your own wallet, and choose whether to give up mint and freeze authority. You sign everything. No platform fee.</p>
+    <ul class="chips">
+        <li id="chipNetwork">Devnet</li>
+        <li>SPL token standard</li>
+        <li>No platform fee</li>
+        <li>You control the authorities</li>
+    </ul>
+</section>
+
+<main class="layout">
+    <section class="card form-card" aria-labelledby="formTitle">
+        <h2 id="formTitle">Create your token</h2>
+
+        <div class="field">
+            <label for="tokenName">Name</label>
+            <input type="text" id="tokenName" placeholder="Hyper Doge" autocomplete="off" maxlength="32">
+        </div>
+
+        <div class="grid-2">
+            <div class="field">
+                <label for="tokenSymbol">Ticker</label>
+                <input type="text" id="tokenSymbol" placeholder="HDOGE" autocomplete="off" maxlength="10" autocapitalize="characters">
+            </div>
+            <div class="field">
+                <label for="tokenDecimals">Decimals</label>
+                <input type="number" id="tokenDecimals" value="9" min="0" max="9" step="1" inputmode="numeric">
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="tokenSupply">Initial supply</label>
+            <input type="number" id="tokenSupply" placeholder="1000000000" min="1" step="1" inputmode="numeric">
+            <p class="hint">Whole tokens. All of it is minted to your wallet.</p>
+        </div>
+
+        <fieldset class="field toggles">
+            <legend>Authorities</legend>
+            <label class="toggle">
+                <input type="checkbox" id="revokeMint">
+                <span><b>Revoke mint authority</b> No one can ever mint more. Irreversible.</span>
+            </label>
+            <label class="toggle">
+                <input type="checkbox" id="revokeFreeze">
+                <span><b>Revoke freeze authority</b> Holder accounts can never be frozen. Irreversible.</span>
+            </label>
+        </fieldset>
+
+        <div class="field">
+            <span class="label">Image <em>(local preview only)</em></span>
+            <button type="button" class="upload" id="uploadBox">
+                <img id="uploadPreview" alt="" hidden>
+                <svg id="uploadIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span id="uploadLabel">Choose an image</span>
+            </button>
+            <input type="file" id="tokenImageInput" accept="image/*" hidden>
+            <p class="hint">Token metadata is not written on-chain yet, so the name and image will not show in wallets or explorers. Only the mint address identifies the token.</p>
+        </div>
+
+        <details class="advanced">
+            <summary>Advanced: custom RPC endpoint</summary>
+            <div class="field">
+                <label for="rpcUrl">RPC URL</label>
+                <input type="url" id="rpcUrl" placeholder="Leave blank for the public endpoint" autocomplete="off">
+                <p class="hint">Public endpoints are shared and rate-limited. Use your own provider for real launches. Only use an endpoint you trust: it reports the network and the rent amounts this page relies on.</p>
+            </div>
+        </details>
+
+        <label class="toggle confirm" id="mainnetConfirmRow" hidden>
+            <input type="checkbox" id="mainnetConfirm">
+            <span><b>I understand this spends real SOL on Mainnet</b> and cannot be undone.</span>
+        </label>
+
+        <button type="button" class="btn-primary" id="deployBtn" disabled>Connect wallet to continue</button>
+        <div class="status" id="statusMsg" role="status" aria-live="polite"></div>
+
+        <div class="result" id="resultBox" hidden>
+            <h3 id="resultTitle">Token created</h3>
+            <p class="hint">Mint address</p>
+            <code id="resultMint"></code>
+            <div class="result-actions">
+                <button type="button" class="btn-ghost" id="copyMintBtn">Copy address</button>
+                <a class="btn-ghost" id="resultLink" target="_blank" rel="noopener noreferrer">View on Solscan</a>
+            </div>
+        </div>
+    </section>
+
+    <aside class="side">
+        <section class="card preview-card" aria-label="Token preview">
+            <p class="eyebrow">Preview</p>
+            <div class="preview">
+                <div class="avatar" id="previewAvatar">?</div>
+                <div class="preview-text">
+                    <strong id="previewName">Your token</strong>
+                    <span id="previewSymbol">$TICKER</span>
+                </div>
+            </div>
+            <dl class="kv">
+                <div><dt>Supply</dt><dd id="previewSupply">-</dd></div>
+                <div><dt>Decimals</dt><dd id="previewDecimals">9</dd></div>
+                <div><dt>Mint authority</dt><dd id="previewMintAuth">You</dd></div>
+                <div><dt>Freeze authority</dt><dd id="previewFreezeAuth">You</dd></div>
+            </dl>
+        </section>
+
+        <section class="card cost-card" aria-label="Estimated cost">
+            <p class="eyebrow">Estimated cost</p>
+            <dl class="kv">
+                <div><dt>Mint account rent</dt><dd id="costMint">-</dd></div>
+                <div><dt>Your token account rent</dt><dd id="costAta">-</dd></div>
+                <div><dt>Network fee</dt><dd id="costFee">-</dd></div>
+                <div class="total"><dt>Total</dt><dd id="costTotal">-</dd></div>
+            </dl>
+            <p class="hint">Mint rent is a one-time deposit that stays locked in the mint account for good. Token account rent is refundable if you close that account. Your wallet shows the exact amount before you approve. Nothing is paid to HyperPump.</p>
+        </section>
+    </aside>
+</main>
+
+<section class="explore" aria-labelledby="exploreTitle">
+    <div class="explore-head">
+        <h2 id="exploreTitle">Deployed tokens</h2>
+        <p>Example tokens for preview. Tokens you create in this session are added to the front.</p>
+    </div>
+    <div class="token-grid" id="tokenGrid"></div>
+</section>
+
+<footer>
+    HyperPump is a front end only: no backend, no custody of keys or funds. Always review the transaction in your wallet before approving.
+</footer>
+
+<div id="loader" role="status" aria-live="polite" hidden>
+    <div class="spinner"></div>
+    <p class="loader-title">Confirming on-chain&hellip;</p>
+    <p class="loader-sub">This can take a few seconds.</p>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
