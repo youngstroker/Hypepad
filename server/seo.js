@@ -7,8 +7,11 @@ import { db } from './db.js';
 import { lastPrices } from './prices.js';
 
 const template = fs.readFileSync(path.join(config.root, 'public/index.html'), 'utf8');
-const MARK = '<!--SEO: the server fills in title, description, canonical and social tags-->';
-if (!template.includes(MARK)) throw new Error('public/index.html is missing the SEO marker');
+// public/index.html carries a default <head> block between these markers so
+// it also works served statically (e.g. from Vercel before a backend exists);
+// the server swaps the whole block for page-specific tags.
+const SEO_BLOCK = /<!--SEO-->[\s\S]*?<!--\/SEO-->/;
+if (!SEO_BLOCK.test(template)) throw new Error('public/index.html is missing the <!--SEO--> block');
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const abs = (p) => (/^https?:\/\//.test(p) ? p : `${config.publicUrl}${p}`);
@@ -32,7 +35,7 @@ function head({ title, description, url, image, imageAlt, large = true }) {
     ].join('\n    ');
 }
 
-const render = (tags) => template.replace(MARK, () => tags); // a function, so `$&` etc. in coin names stay literal
+const render = (tags) => template.replace(SEO_BLOCK, () => tags); // a function, so `$&` etc. in coin names stay literal
 
 const home = render(head({
     title: `${config.siteName} — Launch on Hyperliquid, pay in SOL`,

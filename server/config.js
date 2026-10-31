@@ -49,7 +49,9 @@ export const config = {
     port: num('PORT', 4191),
     host: env.HOST || '127.0.0.1',
     publicUrl: (env.PUBLIC_URL || `http://127.0.0.1:${num('PORT', 4191)}`).replace(/\/$/, ''),
-    trustProxy: bool('TRUST_PROXY'),
+    // Number of proxies in front of the app: 1 behind Caddy, 2 behind Vercel + Caddy.
+    // 'true' means 1. Each hop's X-Forwarded-For entry is trusted, so never set it higher than reality.
+    trustProxy: /^\d+$/.test(env.TRUST_PROXY || '') ? Number(env.TRUST_PROXY) : bool('TRUST_PROXY') ? 1 : 0,
     siteName: env.SITE_NAME || 'HyperPump',
     dataDir: path.resolve(root, env.DATA_DIR || 'data'),
 

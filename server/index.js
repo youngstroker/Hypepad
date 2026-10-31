@@ -21,7 +21,7 @@ if (config.evm.chainId === 999 && evm.relayer && evm.sharedKey) {
 
 const app = express();
 app.disable('x-powered-by');
-if (config.trustProxy) app.set('trust proxy', 1);
+if (config.trustProxy) app.set('trust proxy', config.trustProxy);
 
 app.use((req, res, next) => {
     res.set({
