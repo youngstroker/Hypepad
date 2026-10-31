@@ -69,6 +69,7 @@ export function renderCost() {
 export function renderButton() {
     const btn = $('#launchBtn');
     const cfg = store.config;
+    if (store.comingSoon) { btn.disabled = true; btn.textContent = 'Launching soon'; return; }
     if (!cfg) { btn.disabled = true; btn.textContent = 'Loading…'; return; }
     if (!cfg.ready) { btn.disabled = true; btn.textContent = 'Launching is temporarily unavailable'; return; }
     btn.disabled = image.uploading;
@@ -94,8 +95,15 @@ async function handleFile(file) {
     $('#uploadPreview').src = image.url;
     $('#uploadPreview').hidden = false;
     $('#uploadEmpty').hidden = true;
-    setUploadState('Uploading…');
     renderPreview();
+    if (store.comingSoon) {
+        // Nothing to upload to yet; the preview still shows the image.
+        mine.uploading = false;
+        setUploadState('');
+        renderButton();
+        return;
+    }
+    setUploadState('Uploading…');
     renderButton();
     // A newer pick (or a form reset) replaces `image`; this upload must not touch it then.
     try {

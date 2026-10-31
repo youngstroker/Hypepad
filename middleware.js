@@ -11,8 +11,11 @@ export const config = {
 
 export default function middleware(request) {
     const backend = process.env.BACKEND_URL;
-    if (!backend) return next();
     const url = new URL(request.url);
+    if (!backend) {
+        // No backend yet: coin links open the site (which shows "launching soon") instead of a 404.
+        return url.pathname.startsWith('/coin/') ? rewrite(new URL('/', request.url)) : next();
+    }
     // Pass the visitor's IP with a shared secret, so the backend can rate-limit
     // per visitor without trusting forwarded-for headers anyone could forge.
     const headers = new Headers(request.headers);

@@ -2,7 +2,7 @@ import { h, $, $$, toast, openModal, closeModal, wireDialogs, copyText } from '.
 import { api } from './api.js';
 import { short, compact, usd, hype, tinyNumber, ago } from './format.js';
 import { settings, updateSettings, resetSettings, onSettings, savedOrders, DEFAULTS, PRIORITY } from './settings.js';
-import { store, loadConfig, refreshPrices, onStore, explorerUrl } from './store.js';
+import { store, loadConfig, refreshPrices, onStore, explorerUrl, markComingSoon } from './store.js';
 import * as w from './wallets.js';
 import { wireFeed, loadFeed, rerenderFeed, openTokenModal, refreshOpenToken, clearTokenParam } from './coins.js';
 import { wireLaunch, renderCost, renderPreview, renderButton, fillRecipientIfEmpty } from './launch.js';
@@ -167,8 +167,16 @@ function ensureTerms() {
 
 async function renderTicker() {
     let items = [];
-    try { items = await api('/activity'); } catch { return; }
     const track = $('#ticker');
+    try {
+        items = await api('/activity');
+    } catch (err) {
+        if (err.status !== 404) return;
+        markComingSoon();
+        track.replaceChildren(h('span.ticker-empty', 'Live trades scroll here once trading opens.'));
+        track.style.animation = 'none';
+        return;
+    }
     if (!items.length) {
         track.replaceChildren(h('span.ticker-empty', 'No trades yet. Launch the first coin.'));
         track.style.animation = 'none';
@@ -195,6 +203,10 @@ async function loadStats() {
 
 function renderStats() {
     const el = (k) => $(`[data-stat="${k}"]`);
+    if (store.comingSoon && !stats) {
+        ['tokens', 'volume24h', 'graduated', 'rate'].forEach((k) => { if (!el(k).dataset.n) el(k).textContent = 'Soon'; });
+        return;
+    }
     if (stats) {
         countTo(el('tokens'), stats.tokens, (n) => compact(Math.round(n), 1));
         countTo(el('graduated'), stats.graduated, (n) => compact(Math.round(n), 1));
@@ -204,7 +216,19 @@ function renderStats() {
     if (store.prices) countTo(el('rate'), store.prices.solHype, (n) => `${tinyNumber(n)} HYPE`);
 }
 
+function renderComingSoon() {
+    const banner = $('#banner');
+    banner.hidden = false;
+    banner.className = 'banner info';
+    banner.textContent = "We're launching soon. Look around and preview your coin; launching and trading open shortly.";
+    $('.announce-tag').textContent = 'Soon';
+    $('#netPill').textContent = 'Launching soon';
+    rerenderFeed();
+    renderButton();
+}
+
 function renderChrome() {
+    if (store.comingSoon && !store.config) return renderComingSoon();
     const c = store.config;
     if (!c) return;
     $$('[data-site-name]').forEach((el) => (el.textContent = c.siteName));
@@ -258,7 +282,11 @@ async function boot() {
     renderWallets();
 
     // Nothing waits on anything else: a slow endpoint only delays its own part of the page.
-    loadConfig().catch((err) => {
+    const deep = location.pathname.match(/^\/coin\/(0x[0-9a-fA-F]{40})$/)?.[1] || new URLSearchParams(location.search).get('token');
+    loadConfig().then(() => {
+        if (deep && isAddress(deep)) openTokenModal(deep);
+    }).catch((err) => {
+        if (err.status === 404) return; // not deployed yet: renderComingSoon() handles the page
         $('#banner').hidden = false;
         $('#banner').className = 'banner error';
         $('#banner').textContent = `Could not reach the server: ${err.message}`;
@@ -269,17 +297,22 @@ async function boot() {
     renderTicker();
     w.eagerConnect();
 
-    const deep = location.pathname.match(/^\/coin\/(0x[0-9a-fA-F]{40})$/)?.[1] || new URLSearchParams(location.search).get('token');
-    if (deep && isAddress(deep)) openTokenModal(deep);
-
     setInterval(() => {
-        if (document.hidden || !settings().autoRefresh) return;
+        if (document.hidden || !settings().autoRefresh || store.comingSoon) return;
         refreshPrices();
         loadFeed({ quiet: true });
         loadStats();
         refreshOpenToken();
     }, 15_000);
-    setInterval(() => { if (!document.hidden && settings().autoRefresh) renderTicker(); }, 30_000);
+    setInterval(() => { if (!document.hidden && settings().autoRefresh && !store.comingSoon) renderTicker(); }, 30_000);
+    // While launching soon, check once a minute and switch on when the backend answers.
+    setInterval(async () => {
+        if (!store.comingSoon || document.hidden) return;
+        try {
+            await api('/config');
+            location.reload();
+        } catch { /* still not deployed */ }
+    }, 60_000);
 }
 
 boot();

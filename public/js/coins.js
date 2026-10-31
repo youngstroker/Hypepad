@@ -2,7 +2,7 @@ import { h, $, $$, openModal, copyText, toast, coinImage } from './dom.js';
 import { api } from './api.js';
 import { usd, usdPrice, hype, hypePrice, pct, ago, short, compact, tokens as fmtTokens } from './format.js';
 import { settings } from './settings.js';
-import { store, explorerUrl, solToHype } from './store.js';
+import { store, explorerUrl, solToHype, markComingSoon } from './store.js';
 import { wallets, onWallets, connectEvm, sendEvmTx, hasEvmWallet, walletErrorMessage } from './wallets.js';
 import { encodeFunctionData, parseEther, parseUnits, formatUnits, maxUint256, isAddress } from '/vendor/libs.js';
 
@@ -56,7 +56,12 @@ function renderGrid() {
         grid.replaceChildren(...Array.from({ length: 8 }, () => h('div.skeleton')));
         return;
     }
-    if (!feed.items.length) {
+    if (!feed.items.length && store.comingSoon) {
+        grid.replaceChildren(h('div.empty.soon',
+            h('span.pill-label', 'Launching soon'),
+            h('h3', 'Coins appear here at launch'),
+            h('p', 'Every coin launched on HyperPump shows up here with its price, market cap and bonding progress.')));
+    } else if (!feed.items.length) {
         grid.replaceChildren(h('div.empty',
             h('h3', feed.q ? 'No coins match that search' : feed.sort === 'graduated' ? 'No coin has graduated yet' : 'No coins yet'),
             h('p', feed.q ? 'Try a different name, ticker or contract address.' : 'Be the first: launch one above.')));
@@ -96,7 +101,8 @@ export async function loadFeed({ append = false, quiet = false } = {}) {
             feed.hasMore = res.hasMore;
         }
     } catch (err) {
-        if (!quiet && my === feed.seq) toast(err.message, 'err');
+        if (err.status === 404) markComingSoon();
+        else if (!quiet && my === feed.seq) toast(err.message, 'err');
     } finally {
         if (my === feed.seq) {
             feed.loading = false;
