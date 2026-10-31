@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import express from 'express';
 import { config, publicConfig } from './config.js';
 import { db, now } from './db.js';
@@ -27,11 +28,21 @@ function clientKey(ip = '') {
     return full.slice(0, 4).map((g) => g.padStart(4, '0').toLowerCase()).join(':');
 }
 
+const proxySecret = config.proxySecret ? Buffer.from(config.proxySecret) : null;
+/** The visitor's IP: from our Vercel proxy when it proves the shared secret, else the socket/proxy chain. */
+function clientIp(req) {
+    const given = req.get('x-hp-proxy');
+    if (proxySecret && given && given.length === proxySecret.length && crypto.timingSafeEqual(Buffer.from(given), proxySecret)) {
+        return req.get('x-hp-client-ip') || req.ip;
+    }
+    return req.ip;
+}
+
 function rateLimit({ windowMs, max }) {
     const hits = new Map();
     setInterval(() => hits.clear(), windowMs).unref();
     return (req, res, next) => {
-        const key = clientKey(req.ip);
+        const key = clientKey(clientIp(req));
         const n = (hits.get(key) || 0) + 1;
         if (hits.size < 200_000 || hits.has(key)) hits.set(key, n);
         if (n > max) return res.status(429).json({ error: 'Too many requests. Slow down a little.' });
@@ -270,7 +281,7 @@ api.post('/upload', uploadLimit, express.raw({ type: () => true, limit: config.l
     const type = IMAGE_TYPES.find((t) => t.test(buf));
     if (!type) throw new InputError('Use a PNG, JPG, GIF, or WEBP image.');
     try {
-        res.json({ image: uploads.save(buf, type.ext, clientKey(req.ip)) });
+        res.json({ image: uploads.save(buf, type.ext, clientKey(clientIp(req))) });
     } catch (err) {
         if (err instanceof uploads.UploadRefused) throw new InputError(err.message, 503);
         throw err;
@@ -280,11 +291,11 @@ api.post('/upload', uploadLimit, express.raw({ type: () => true, limit: config.l
 // ---------------------------------------------------------------- orders
 
 api.post('/orders/launch', writeLimit, express.json({ limit: '16kb' }), wrap(async (req, res) => {
-    res.status(201).json(await orders.createLaunchOrder(req.body || {}, { ip: clientKey(req.ip) }));
+    res.status(201).json(await orders.createLaunchOrder(req.body || {}, { ip: clientKey(clientIp(req)) }));
 }));
 
 api.post('/orders/buy', writeLimit, express.json({ limit: '4kb' }), wrap(async (req, res) => {
-    res.status(201).json(await orders.createBuyOrder(req.body || {}, { ip: clientKey(req.ip) }));
+    res.status(201).json(await orders.createBuyOrder(req.body || {}, { ip: clientKey(clientIp(req)) }));
 }));
 
 api.get('/orders/:id', (req, res) => {

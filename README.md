@@ -78,12 +78,19 @@ npm run preflight
 ```
 It must print **GO**. It checks networks, your https `PUBLIC_URL`, both RPCs, treasury key, factory owner/fees/launcher, the HyperSwap init-code hash against live pairs, balances, the migrator's block mode, prices, and disk.
 
-### 5. Go live
-Point your domain's DNS (A/AAAA) at the server, then:
-```bash
-docker compose up -d --build
-```
-Caddy gets the HTTPS certificate automatically and redirects `www` to the apex. Back up the `hyperpump-data` volume (database + coin images).
+### 5. Go live (Vercel + backend server)
+The site runs on Vercel (repo `youngstroker/Hypepad`, Vercel project `hypepad`; every push to `main` redeploys). The backend in `server/` runs on your own server, because it needs always-on background jobs and a persistent disk, which Vercel functions don't have. `middleware.js` forwards `/`, `/coin/*`, `/api/*`, `/uploads/*`, `robots.txt` and `sitemap.xml` from Vercel to it.
+
+1. **Backend server** (any VPS with Docker, e.g. 2 vCPU / 2 GB): point `api.yourdomain.com` (A/AAAA) at it. In `.env` set `DOMAIN=api.yourdomain.com`, `PUBLIC_URL=https://yourdomain.com` (the Vercel domain users visit), and `PROXY_SECRET` to a long random string (`openssl rand -hex 32`). Then:
+   ```bash
+   docker compose up -d --build
+   ```
+   Caddy gets the HTTPS certificate for `api.yourdomain.com` automatically. Back up the `hyperpump-data` volume (database + coin images).
+2. **Vercel project → Settings → Environment Variables** (Production): `BACKEND_URL=https://api.yourdomain.com` and `PROXY_SECRET=<the same secret>`. Redeploy.
+3. **Vercel → Domains:** add `yourdomain.com` (and `www`). Vercel shows the DNS records to set.
+4. Open `https://yourdomain.com`: the banner disappears and coins load once the backend answers. `npm run preflight` on the server must still say **GO**.
+
+Prefer one server and no Vercel? Point `yourdomain.com` at the server, set `DOMAIN=yourdomain.com`, and `docker compose up -d --build` serves everything.
 
 ### Running it
 - `npm run admin -- attention` lists anything needing a human: orders under review, refunds that must be sent by hand, stuck orders, unreadable deposits.

@@ -53,6 +53,9 @@ export const config = {
     // 'true' means 1. Each hop's X-Forwarded-For entry is trusted, so never set it higher than reality.
     trustProxy: /^\d+$/.test(env.TRUST_PROXY || '') ? Number(env.TRUST_PROXY) : bool('TRUST_PROXY') ? 1 : 0,
     siteName: env.SITE_NAME || 'HyperPump',
+    // Shared with the Vercel project (PROXY_SECRET there too): requests that
+    // carry it may tell us the visitor's real IP.
+    proxySecret: env.PROXY_SECRET || '',
     dataDir: path.resolve(root, env.DATA_DIR || 'data'),
 
     solana: {
